@@ -56,7 +56,7 @@ void ClsSocket::addNonBlockSocket(SOCKET s)
 
 		cout << s2 << endl;
 
-		string s = "you are connecting";
+		string s = "you are connecting#&";
 		send(s2, s.c_str(), sizeof(s), 0);
 	}
 	else
@@ -116,7 +116,7 @@ void ClsSocket::getMSG(set<int>::iterator& it, string str)
 		if (str == "discon")
 		{
 
-			sendMSG(s, "Your are disconnect");
+			sendMSG(s, "Your are disconnect#&");
 
 			closesocket(*it);
 			clients.erase(it++);
@@ -148,7 +148,7 @@ int ClsSocket::sendFileToClient(SOCKET s)
 	f.seekp(0, ios::end);
 	long size = (long)f.tellp();
 	f.seekp(0, ios::beg);
-	
+	Sleep(100);
 	sendSizeMsg(s, size);
 	char * buffer = new char[size];
 

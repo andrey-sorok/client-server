@@ -13,13 +13,32 @@ class SockClient:
     def __init__(self, p, h):
         self.port = p
         self.host = h
+
+    def strOut(self, s):
+        src = re.search(b'#&', s)
+        rtn = s[0:src.regs[0][0]]
+        return rtn.decode()
     
     def sockConnect(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.host, self.port))
 
         msg = self.sock.recv(1024)
+        msg  = self.strOut(msg)
+   
         print(msg)
+
+    def sockDiscon(self):
+        self.initSeans()
+        msg = b'discon'
+
+        self.sendLength(len(msg))
+        self.sendMSG(msg)
+
+        msg = self.getMsg()
+        msg = self.strOut(msg)
+        print(msg)
+
 
     def initSeans(self):
         s = b'#&'
@@ -34,12 +53,18 @@ class SockClient:
         self.sock.recv(1024)
 
     def sendMSG(self, msg):
+        msg += b'#&'
         self.sock.send(msg)
         self.sock.recv(1024)
 
+    def getMsg(self):
+        msg = self.sock.recv(1024)
+        self.sock.send(b'#&')
+        return msg
+
     def sendMail(self):
         self.initSeans()
-        s = b'mail Hellow, it`s mail from PYTHON#&'
+        s = b'mail Hellow, it`s mail from PYTHON'
         self.sendLength(len(s))
         self.sendMSG(s)
 
@@ -51,13 +76,11 @@ class SockClient:
         cmd = b'file' + b'#&'
         self.sendMSG(cmd)
         
-        size = self.sock.recv(1024)
+        size = self.getMsg()
+        
         f = open('file.txt', 'w')
         size = (int(size.decode())) -1
-
-        cmd = b'#&'
-        self.sock.send(cmd)
-
+   
         while size > 0:
             data = self.sock.recv(size) 
             data = data.decode('unicode-escape')   
@@ -75,9 +98,13 @@ class SockClient:
 
             if s == b'file':
                 self.getFile()
-            else:    
+            elif s == b'mail':   
                 self.sendMail()
-              
+            elif s == b'discon':
+                self.sockDiscon()   
+            elif s == b'connect':
+                self.sockConnect()
+                        
 
 
 sc = SockClient(555, 'localhost')

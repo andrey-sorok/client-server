@@ -28,8 +28,8 @@ private:
 	int startUp();
 	int createSocket(SOCKET& s);
 	int connectServer(SOCKET& s, sockaddr_in& sa);
-
-	bool isEnd(string str);
+ 
+	bool isEnd(string & str);
 
 	void initTransfer(SOCKET s);
 

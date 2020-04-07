@@ -39,7 +39,7 @@ int ClsClient::connectServer(SOCKET & s, sockaddr_in & sa)
 	return err;
 }
 
-bool ClsClient::isEnd(string str)
+bool ClsClient::isEnd(string & str)
 {
 	bool rtn = 0;
 
@@ -106,8 +106,10 @@ ClsClient::ClsClient(int port): err(-1)
 
 	char inbuff[1024];
 	int res = recv(s1, inbuff, sizeof(inbuff), 0);
+	string msg = inbuff;
+	isEnd(msg);
 
-	cout << inbuff << endl;
+	cout << msg << endl;
 
 }
 
@@ -163,7 +165,8 @@ void ClsClient::sendReceivMsg()
 			if (res > 0)
 				{
 					string str = inbuff;
-					cout << str.c_str() << endl;
+					isEnd(str);
+					cout << str << endl;
 				}
 		}
 
